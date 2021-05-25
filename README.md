@@ -4,12 +4,6 @@ The actor parses input table from Apify <> Keboola extractor and maps the data i
 If you didn't use Apify <> Keboola integration yet, this tool is not what you are probably looking for. But you
 can follow [this article](https://help.apify.com/en/articles/2003234-keboola-integration) to learn about integration.
 
-<!-- toc start -->
-- Introduction
-- Use Case - Web Scraper
-- Input
- <!-- toc end -->
-
 ## Introduction
 
 It is not possible to pass input table from the Keboola extractor into any public actor. Because Keboola extractor passed
