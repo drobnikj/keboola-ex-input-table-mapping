@@ -30,7 +30,6 @@ Apify.main(async () => {
             metamorfActorId = task.actId;
             metamorfInput = task.input;
             metamorfOptions = task.options;
-            console.log(task);
         } catch (err) {
             throw new Error(`Cannot find task with ${targetTaskId}!`);
         }
@@ -68,10 +67,12 @@ Apify.main(async () => {
     };
     const inputMapped = await inputMappingFunction(context);
 
-    if (!_.isObject(inputMapped)) throw new Error('The inputMapping does not return object. It needs to return object as input for target actor/task run.');
+    if (!_.isObject(inputMapped)) {
+        throw new Error('The inputMapping does not return object. It needs to return object as input for target actor/task run.');
+    }
 
     const finalInput = { ...metamorfInput, ...inputMapped };
-    // TODO: !!! This is workaround as Apify.metamorph did not use input as the second parameter, check why and report !!!
+    // TODO: !!! This is workaround as Apify.metamorph did not use input. It happens in case target actor loads input using Apify.getValue('INPUT') not Apify.getInput() !!!
     await Apify.setValue('INPUT', finalInput);
     const finalOptions = metamorfOptions && metamorfOptions.build ? { build: metamorfOptions.build } : {};
     await Apify.metamorph(metamorfActorId, finalInput, finalOptions);
