@@ -11,7 +11,7 @@ Apify.main(async () => {
 
     /**
      * NOTE: It is not possible to metamorf into task. But we get task input and actor ID for task
-     * and use to metamerf into.
+     * and use to metamorf into.
      */
     let metamorfActorId;
     let metamorfInput;
@@ -64,7 +64,7 @@ Apify.main(async () => {
 
     const context = {
         originalInput: input,
-        parsedCsvData,
+        parsedInputTableCsv: parsedCsvData,
     };
     const inputMapped = await inputMappingFunction(context);
 
@@ -75,8 +75,4 @@ Apify.main(async () => {
     await Apify.setValue('INPUT', finalInput);
     const finalOptions = metamorfOptions && metamorfOptions.build ? { build: metamorfOptions.build } : {};
     await Apify.metamorph(metamorfActorId, finalInput, finalOptions);
-});
-
-parsedInputTableCsv.map((line) => {
-    return { url: line['URL'] };
 });
