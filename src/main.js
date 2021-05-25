@@ -10,26 +10,26 @@ Apify.main(async () => {
     const { inputTableRecord: { storeId, key }, fields, inputMapping, targetActorId, targetTaskId } = input;
 
     /**
-     * NOTE: It is not possible to metamorf into task. But we get task input and actor ID for task
-     * and use to metamorf into.
+     * NOTE: It is not possible to metamorph into task. But we get task input and actor ID for task
+     * and use to metamorph into.
      */
-    let metamorfActorId;
-    let metamorfInput;
-    let metamorfOptions;
+    let metamorphActorId;
+    let metamorphInput;
+    let metamorphOptions;
     if (targetActorId) {
         try {
             const actor = await apifyClient.actor(targetActorId).get();
-            metamorfActorId = actor.id;
-            metamorfInput = {};
+            metamorphActorId = actor.id;
+            metamorphInput = {};
         } catch (err) {
             throw new Error(`Cannot find actor with ${targetActorId}!`);
         }
     } else if (targetTaskId) {
         try {
             const task = await apifyClient.task(targetTaskId).get();
-            metamorfActorId = task.actId;
-            metamorfInput = task.input;
-            metamorfOptions = task.options;
+            metamorphActorId = task.actId;
+            metamorphInput = task.input;
+            metamorphOptions = task.options;
         } catch (err) {
             throw new Error(`Cannot find task with ${targetTaskId}!`);
         }
@@ -71,9 +71,9 @@ Apify.main(async () => {
         throw new Error('The inputMapping does not return object. It needs to return object as input for target actor/task run.');
     }
 
-    const finalInput = { ...metamorfInput, ...inputMapped };
+    const finalInput = { ...metamorphInput, ...inputMapped };
     // TODO: !!! This is workaround as Apify.metamorph did not use input. It happens in case target actor loads input using Apify.getValue('INPUT') not Apify.getInput() !!!
     await Apify.setValue('INPUT', finalInput);
-    const finalOptions = metamorfOptions && metamorfOptions.build ? { build: metamorfOptions.build } : {};
-    await Apify.metamorph(metamorfActorId, finalInput, finalOptions);
+    const finalOptions = metamorphOptions && metamorphOptions.build ? { build: metamorphOptions.build } : {};
+    await Apify.metamorph(metamorphActorId, finalInput, finalOptions);
 });
