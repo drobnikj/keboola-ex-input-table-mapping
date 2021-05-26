@@ -3,11 +3,12 @@ const parse = require('csv-parse');
 const _ = require('lodash');
 const vm = require('vm');
 
+const { utils: { log } } = Apify;
 const apifyClient = Apify.newClient();
 
 Apify.main(async () => {
     const input = await Apify.getInput();
-    const { inputTableRecord: { storeId, key }, fields, inputMapping, targetActorId, targetTaskId } = input;
+    const { inputTableRecord, fields, inputMapping, targetActorId, targetTaskId } = input;
 
     /**
      * NOTE: It is not possible to metamorph into task. But we get task input and actor ID for task
@@ -37,20 +38,25 @@ Apify.main(async () => {
         throw new Error('Target ActorId or TaskId has to be set!');
     }
 
-    // Use apify-client, SDK cannot do streams.
-    const storeClient = await apifyClient.keyValueStore(storeId);
-    const { value: recordStream } = await storeClient.getRecord(key, { stream: true });
-
-    // Parse csv using with async generators
-    const parser = recordStream.pipe(parse({ columns: true }));
-
     const parsedCsvData = [];
-    for await (const line of parser) {
-        const updatedLine = Array.isArray(fields) && fields.length
-            ? _.pick(line, fields)
-            : line;
-        parsedCsvData.push(updatedLine);
-        // TODO: ?? Function that can be eval on each line
+    if (inputTableRecord) {
+        // Use apify-client, SDK cannot do streams.
+        const { storeId, key } = inputTableRecord;
+        const storeClient = await apifyClient.keyValueStore(storeId);
+        const { value: recordStream } = await storeClient.getRecord(key, { stream: true });
+
+        // Parse csv using with async generators
+        const parser = recordStream.pipe(parse({ columns: true }));
+
+        for await (const line of parser) {
+            const updatedLine = Array.isArray(fields) && fields.length
+                ? _.pick(line, fields)
+                : line;
+            parsedCsvData.push(updatedLine);
+            // TODO: ?? Function that can be eval on each line
+        }
+    } else {
+        log.warning('The inputTableRecord was not passed, the parsedInputTableCsv will be empty.');
     }
 
     let inputMappingFunction;
