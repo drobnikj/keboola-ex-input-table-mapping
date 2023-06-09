@@ -97,6 +97,7 @@ Apify.main(async () => {
 
     const finalInput = { ...metamorphInput, ...inputMapped };
     if (skipMetamorph) {
+        log.info('Running target Actor without metamorph');
         const finishedRun = await callActorWithLog(metamorphActorId, finalInput, metamorphOptions);
         log.info('Loading results from target Actor run');
         const { defaultDatasetId } = finishedRun;
@@ -114,6 +115,7 @@ Apify.main(async () => {
         return;
     }
     // TODO: !!! This is workaround as Apify.metamorph did not use input. It happens in case target actor loads input using Apify.getValue('INPUT') not Apify.getInput() !!!
+    log.info('Running target Actor with metamorph');
     await Apify.setValue('INPUT', finalInput);
     const finalOptions = metamorphOptions && metamorphOptions.build ? { build: metamorphOptions.build } : {};
     await Apify.metamorph(metamorphActorId, finalInput, finalOptions);
