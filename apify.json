@@ -1,7 +1,0 @@
-{
-	"name": "keboola-ex-input-table-mapping",
-	"version": "0.0",
-	"buildTag": "latest",
-	"env": null,
-	"template": "project_empty"
-}

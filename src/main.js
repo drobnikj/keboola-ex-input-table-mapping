@@ -6,9 +6,27 @@ const vm = require('vm');
 const { utils: { log } } = Apify;
 const apifyClient = Apify.newClient();
 
+/**
+ * Calls actor with log on stdout.
+ * @param actorName
+ * @param input
+ * @param options
+ * @return {Promise<ActorRun|void>}
+ */
+const callActorWithLog = async (actorName, input, options) => {
+    // 2 secs just to init logging
+    const run = await Apify.call(actorName, input, { ...options, waitSecs: 2 });
+    log.info(`----- Log from run ${run.id} started -----`);
+    const logStream = await apifyClient.log(run.id).stream();
+    logStream.pipe(process.stdout);
+    const finishedRun = await apifyClient.run(run.id).waitForFinish();
+    log.info(`----- Log from run ${finishedRun.id} finished -----`);
+    return finishedRun;
+};
+
 Apify.main(async () => {
     const input = await Apify.getInput();
-    const { inputTableRecord, fields, inputMapping, targetActorId, targetTaskId } = input;
+    const { inputTableRecord, fields, inputMapping, targetActorId, targetTaskId, skipMetamorph } = input;
 
     /**
      * NOTE: It is not possible to metamorph into task. But we get task input and actor ID for task
@@ -78,6 +96,23 @@ Apify.main(async () => {
     }
 
     const finalInput = { ...metamorphInput, ...inputMapped };
+    if (skipMetamorph) {
+        const finishedRun = await callActorWithLog(metamorphActorId, finalInput, metamorphOptions);
+        log.info('Loading results from target Actor run');
+        const { defaultDatasetId } = finishedRun;
+        const dataset = await Apify.openDataset(defaultDatasetId, { forceCloud: true });
+        let offset = 0;
+        const limit = 5000;
+        let pagination;
+        do {
+            pagination = await dataset.getData({ limit, offset });
+            const { items } = pagination;
+            await Apify.pushData(items);
+            offset += limit;
+        } while (pagination.items > 0);
+        log.info('Loading results from target Actor run finished');
+        return;
+    }
     // TODO: !!! This is workaround as Apify.metamorph did not use input. It happens in case target actor loads input using Apify.getValue('INPUT') not Apify.getInput() !!!
     await Apify.setValue('INPUT', finalInput);
     const finalOptions = metamorphOptions && metamorphOptions.build ? { build: metamorphOptions.build } : {};

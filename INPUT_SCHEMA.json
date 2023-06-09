@@ -27,6 +27,12 @@
             "type": "object",
             "description": "This field will be set from Keboola integration.",
             "editor": "hidden"
+        },
+        "skipMetamorph": {
+            "title": "Not using Metamorph",
+            "type": "boolean",
+            "description": "If true, then Metamorph will not be used. Use only in specific cases if metamorph cannot be used for some reason. This option is not recommended and use more compute units.",
+            "default": false
         }
     },
     "required": ["inputMapping"]
