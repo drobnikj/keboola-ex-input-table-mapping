@@ -19,7 +19,7 @@
             "title": "Input mapping function",
             "type": "string",
             "description": "Function that will create input for target actor or task. It has one parameter context with context.currentInput and context.parsedInputTableCsv. The parsedInputTableCsv are parsed data from CSV passed from keboola extractor. Each line is represent as object, where key is name of column.",
-            "prefill": "async function inputMappingFunction({ currentInput, parsedInputTableCsv }) {\n    console.log(parsedInputTableCsv);\n    const targetInput = {\n        startUrls: parsedInputTableCsv.map((line) => line['URL']),\n    }\n    return targetInput;\n}",
+            "prefill": "async function inputMappingFunction({ originalInput, parsedInputTableCsv }) {\n    console.log(parsedInputTableCsv);\n    const targetInput = {\n        startUrls: parsedInputTableCsv.map((line) => line['URL']),\n    }\n    return targetInput;\n}",
             "editor": "javascript"
         },
         "inputTableRecord": {
