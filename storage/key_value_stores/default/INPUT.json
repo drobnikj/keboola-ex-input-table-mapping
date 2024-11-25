@@ -1,0 +1,9 @@
+{
+    "inputMapping": "async function inputMappingFunction({ currentInput, parsedInputTableCsv }) {\n    console.log(parsedInputTableCsv);\n    const targetInput = {\n        profiles: parsedInputTableCsv.map((line) => line['profiles']),\n    }\n    return targetInput;\n}",
+    "targetTaskId": "drobnikj/free-tiktok-scraper",
+    "inputTableRecord": {
+        "storeId": "XxuM7dNbOVB9PRriw",
+        "key": "wjrx06j62i8-nggmcx"
+    },
+    "skipMetamorph": true
+}
