@@ -110,7 +110,7 @@ Apify.main(async () => {
             const { items } = pagination;
             await Apify.pushData(items);
             offset += limit;
-        } while (pagination.items > 0);
+        } while (pagination.items.length > 0);
         log.info('Loading results from target Actor run finished');
         return;
     }
