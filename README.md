@@ -66,7 +66,11 @@ Test3,http://example.com#3,product_3
 Test4,http://example.com#4,product_4
 Test5,http://example.com#5,product_5
 ```
-We need to run an `apify/web-scraper` task where the URL column will be used as "Start URLs" in input. In this case, we'll create a new task for this actor. We will fill "Target Task ID" with the name of the created web-scraper task and "Input mapping function" with a simple JavaScript function that maps CSV into input.
+The input for the input mapping task will be:
+
+Target Actor ID: `apify/web-scraper`
+
+Input Mapping Function:
 ```javascript
 function inputMappingFunction({ originalInput, parsedInputTableCsv }) {
     const startUrls = parsedInputTableCsv.map((line) => {
@@ -77,6 +81,8 @@ function inputMappingFunction({ originalInput, parsedInputTableCsv }) {
     };
 }
 ```
+This function will map the input table from Keboola into the start URLs input for the Web Scraper Actor.
+
 We will save the task, go to Keboola, use the created task in Apify extractor, and select the table we want to pass.
 
 ![Keboola-ex](./images/keboola-ex.png)
@@ -87,14 +93,17 @@ After we save and run this configuration, the task should execute our target tas
 
 Imagine we have tabular data in a CSV in Keboola in the following format:
 ```csv
-Title,URL,ID
+Title,URL
 Restaurant one,https://www.google.com/maps/place/?q=place_id:ChIJjXrFkantkIgRWkqwctFznKk
 Restaurant two,https://www.google.com/maps/place/?q=place_id:JuIljXrFkantkIsrWkqwctFzjjk
 ```
 Additionally, we need to get only reviews newer than January 1, 2024, reviews in English, and limit reviews to a maximum of 100.
 
-We create a task for this Actor with input:
-Set "Target Actor ID" to `compass/Google-Maps-Reviews-Scraper` and "Input mapping function" with a simple JavaScript function that maps CSV into input.
+The input for the input mapping task will be:
+
+Target Actor ID: `compass/Google-Maps-Reviews-Scraper`
+
+Input Mapping Function:
 ```javascript
 function inputMappingFunction({ originalInput, parsedInputTableCsv }) {
     const startUrls = parsedInputTableCsv.map((line) => {
@@ -108,6 +117,9 @@ function inputMappingFunction({ originalInput, parsedInputTableCsv }) {
     };
 }
 ```
+This function will map the input table from Keboola into the start URLs input for the Google Maps Review Scraper Actor, plus it will pass input overrides for the reviews start date, language, and maximum reviews to the target Actor.
+
+
 We will save the task, go to Keboola, use the created task in Apify extractor, and select the table we want to pass.
 
 ![Keboola-ex](./images/keboola-task.png)
