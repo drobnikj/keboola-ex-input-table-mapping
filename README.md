@@ -91,7 +91,7 @@ Title,URL,ID
 Restaurant one,https://www.google.com/maps/place/?q=place_id:ChIJjXrFkantkIgRWkqwctFznKk
 Restaurant two,https://www.google.com/maps/place/?q=place_id:JuIljXrFkantkIsrWkqwctFzjjk
 ```
-Additionally, we need to get only reviews newer than 2024-01-01, reviews in English, and limit reviews to a maximum of 100.
+Additionally, we need to get only reviews newer than January 1, 2024, reviews in English, and limit reviews to a maximum of 100.
 
 We create a task for this Actor with input:
 Set "Target Actor ID" to `compass/Google-Maps-Reviews-Scraper` and "Input mapping function" with a simple JavaScript function that maps CSV into input.
