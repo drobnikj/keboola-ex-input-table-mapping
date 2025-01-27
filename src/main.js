@@ -26,7 +26,11 @@ const callActorWithLog = async (actorName, input, options) => {
 
 Apify.main(async () => {
     const input = await Apify.getInput();
-    const { inputTableRecord, fields, inputMapping, outputMapping, targetActorId, targetTaskId, skipMetamorph } = input;
+    const { inputTableRecord, fields, inputMapping, useOutputMapping, outputMapping, targetActorId, targetTaskId, skipMetamorph } = input;
+
+    if (useOutputMapping && !outputMapping) {
+        throw new Error('Output mapping function is not set, but useOutputMapping is set to true.');
+    }
 
     /**
      * NOTE: It is not possible to metamorph into task. But we get task input and actor ID for task
@@ -86,7 +90,7 @@ Apify.main(async () => {
     if (!_.isFunction(inputMappingFunction)) throw new Error('Parameter "inputMapping" is not a function!');
 
     let outputMappingFunction;
-    if (outputMapping) {
+    if (useOutputMapping) {
         try {
             outputMappingFunction = vm.runInThisContext(`(${outputMapping})`);
         } catch (err) {
