@@ -33,6 +33,21 @@
             "type": "boolean",
             "description": "If true, then Metamorph will not be used. Use only in specific cases if metamorph cannot be used for some reason. This option is not recommended and use more compute units.",
             "default": false
+        },
+        "useOutputMapping": {
+            "sectionCaption": "Output mapping (BETA)",
+            "sectionDescription": "The output mapping is in BETA. It can be used to mutate results from the target Actor or task.",
+            "title": "Use output mapping",
+            "type": "boolean",
+            "description": "If true, then output mapping will be used. It will mutate results from the target Actor or task base on output mapping function.",
+            "default": false
+        },
+        "outputMapping": {
+            "title": "Output mapping function",
+            "type": "string",
+            "description": "Function that will mutates results from the target Actor or task. It has one parameter context with context.item. The item is the one result from target run.",
+            "prefill": "async function outputMappingFunction({ item }) {\n    console.log(item);\n    return item;\n}",
+            "editor": "javascript"
         }
     },
     "required": ["inputMapping"]
