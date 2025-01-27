@@ -35,7 +35,7 @@
             "default": false
         },
         "useOutputMapping": {
-            "section": "Output mapping (BETA)",
+            "sectionCaption": "Output mapping (BETA)",
             "sectionDescription": "The output mapping is in BETA. It can be used to mutate results from the target Actor or task.",
             "title": "Use output mapping",
             "type": "boolean",
