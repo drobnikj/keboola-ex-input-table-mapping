@@ -26,7 +26,7 @@ const callActorWithLog = async (actorName, input, options) => {
 
 Apify.main(async () => {
     const input = await Apify.getInput();
-    const { inputTableRecord, fields, inputMapping, targetActorId, targetTaskId, skipMetamorph } = input;
+    const { inputTableRecord, fields, inputMapping, outputMapping, targetActorId, targetTaskId, skipMetamorph } = input;
 
     /**
      * NOTE: It is not possible to metamorph into task. But we get task input and actor ID for task
@@ -85,6 +85,16 @@ Apify.main(async () => {
     }
     if (!_.isFunction(inputMappingFunction)) throw new Error('Parameter "inputMapping" is not a function!');
 
+    let outputMappingFunction;
+    if (outputMapping) {
+        try {
+            outputMappingFunction = vm.runInThisContext(`(${outputMapping})`);
+        } catch (err) {
+            throw new Error(`Cannot load outputMapping function: ${err.message}\n${err.stack.substr(err.stack.indexOf('\n'))}`);
+        }
+        if (!_.isFunction(outputMappingFunction)) throw new Error('Parameter "inputMapping" is not a function!');
+    }
+
     const context = {
         originalInput: input,
         parsedInputTableCsv: parsedCsvData,
@@ -96,7 +106,8 @@ Apify.main(async () => {
     }
 
     const finalInput = { ...metamorphInput, ...inputMapped };
-    if (skipMetamorph) {
+    // NOTE: If outputMapping is set, we will not use metamorph, otherwise we cannot mutate dataset items.
+    if (skipMetamorph || outputMappingFunction) {
         log.info('Running target Actor without metamorph');
         const finishedRun = await callActorWithLog(metamorphActorId, finalInput, metamorphOptions);
         log.info('Loading results from target Actor run');
@@ -107,8 +118,20 @@ Apify.main(async () => {
         let pagination;
         do {
             pagination = await dataset.getData({ limit, offset });
-            const { items } = pagination;
-            await Apify.pushData(items);
+            if (outputMappingFunction) {
+                const mappedItems = [];
+                for (const item of pagination.items) {
+                    const outputContext = {
+                        item,
+                    };
+                    const outputMapped = await outputMappingFunction(outputContext);
+                    Array.isArray(outputMapped) ? mappedItems.push(...outputMapped) : mappedItems.push(outputMapped);
+                }
+                await Apify.pushData(mappedItems);
+            } else {
+                const { items } = pagination;
+                await Apify.pushData(items);
+            }
             offset += limit;
         } while (pagination.items.length > 0);
         log.info('Loading results from target Actor run finished');

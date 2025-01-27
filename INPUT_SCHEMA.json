@@ -22,6 +22,13 @@
             "prefill": "async function inputMappingFunction({ originalInput, parsedInputTableCsv }) {\n    console.log(parsedInputTableCsv);\n    const targetInput = {\n        startUrls: parsedInputTableCsv.map((line) => line['URL']),\n    }\n    return targetInput;\n}",
             "editor": "javascript"
         },
+        "outputMapping": {
+            "title": "Output mapping function",
+            "type": "string",
+            "description": "Function that will mutates results from the target Actor or task. It has one parameter context with context.item. The item is the one result from target run.",
+            "prefill": "async function inputMappingFunction({ item }) {\n    console.log(item);\n}",
+            "editor": "javascript"
+        },
         "inputTableRecord": {
             "title": "Input table record",
             "type": "object",
