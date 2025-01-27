@@ -129,7 +129,18 @@ Apify.main(async () => {
                         item,
                     };
                     const outputMapped = await outputMappingFunction(outputContext);
-                    Array.isArray(outputMapped) ? mappedItems.push(...outputMapped) : mappedItems.push(outputMapped);
+                    if (!outputMapped || (!_.isPlainObject(outputMapped) || !_.isArray(outputMapped))) {
+                        log.warning(
+                            `Output mapping function returned ${typeof outputMapped}, skipping item. It needs to return object or array`,
+                            { item, outputMapped },
+                        );
+                        continue;
+                    }
+                    if (_.isArray(outputMapped)) {
+                        outputMapped.push(...outputMapped);
+                    } else {
+                        outputMapped.push(outputMapped);
+                    }
                 }
                 await Apify.pushData(mappedItems);
             } else {
