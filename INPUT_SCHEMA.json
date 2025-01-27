@@ -46,7 +46,7 @@
             "title": "Output mapping function",
             "type": "string",
             "description": "Function that will mutates results from the target Actor or task. It has one parameter context with context.item. The item is the one result from target run.",
-            "prefill": "async function inputMappingFunction({ item }) {\n    console.log(item);\n}",
+            "prefill": "async function outputMappingFunction({ item }) {\n    console.log(item);\n    return item;\n}",,
             "editor": "javascript"
         }
     },

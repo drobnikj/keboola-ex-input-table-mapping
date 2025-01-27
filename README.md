@@ -52,8 +52,21 @@ will transform into:
 #### originalInput
 This parameter holds the original input from Input Overrides from Keboola platform settings for task runs.
 
+### Output Mapping
+The JavaScript function maps the output (dataset items) from the target task or Actor to the output format for the Keboola platform.
+
+> Note: The function can return a single object or an array of objects.
+> If the function returns an array, each object will be saved as a separate row in the output dataset.
+
+The function has one parameter:
+
+#### item
+An item from the dataset output of the target task or Actor.
+
 ### Skip Metamorph
 If set to `true`, Metamorph will not be used in processing. This option should only be enabled in specific cases where Metamorph cannot be utilized, as it may increase resource consumption.
+
+> Note: If the output mapping function is enabled, the metamorf wil be always skip.
 
 ## Use Case - Web Scraper
 
