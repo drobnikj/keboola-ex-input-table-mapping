@@ -137,9 +137,9 @@ Apify.main(async () => {
                         continue;
                     }
                     if (_.isArray(outputMapped)) {
-                        outputMapped.push(...outputMapped);
+                        mappedItems.push(...outputMapped);
                     } else {
-                        outputMapped.push(outputMapped);
+                        mappedItems.push(outputMapped);
                     }
                 }
                 await Apify.pushData(mappedItems);
