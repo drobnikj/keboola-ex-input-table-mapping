@@ -129,7 +129,7 @@ Apify.main(async () => {
                         item,
                     };
                     const outputMapped = await outputMappingFunction(outputContext);
-                    if (!outputMapped || (!_.isPlainObject(outputMapped) || !_.isArray(outputMapped))) {
+                    if (!outputMapped || (!_.isPlainObject(outputMapped) && !_.isArray(outputMapped))) {
                         log.warning(
                             `Output mapping function returned ${typeof outputMapped}, skipping item. It needs to return object or array`,
                             { item, outputMapped },
